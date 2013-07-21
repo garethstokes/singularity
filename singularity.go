@@ -1,8 +1,8 @@
 package singularity
 
 import (
-  "singularity/log"
-  "singularity/server"
+  "github.com/garethstokes/singularity/log"
+  "github.com/garethstokes/singularity/server"
   "os"
   "path"
 )
