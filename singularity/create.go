@@ -43,7 +43,7 @@ func Create() {
 
   fmt.Printf( "initializing new intelligence with handle: %s.\n", handle )
 
-  installpath := fmt.Sprintf( "%s/src/singularity/intelligences/%s", os.Getenv("GOPATH"), handle)
+  installpath := fmt.Sprintf( "%s/src/singularity/%s", os.Getenv("GOPATH"), handle)
   installpath = path.Clean(installpath)
 
   err := os.MkdirAll(installpath, 0777)
