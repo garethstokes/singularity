@@ -15,11 +15,10 @@ func buildpath(executable string) (string, error) {
     return "", err
   }
 
-  fmt.Printf( "path: %s\n", p)
   return p, nil
 }
 
-func Watch() {
+func run() {
   intelligence := os.Args[2]
   gopath := os.Getenv("GOPATH")
 
@@ -44,4 +43,8 @@ func Watch() {
   if err != nil {
     fmt.Printf( "ERROR 2: %s\n", err.Error() )
   }
+}
+
+func Begin() {
+  run()
 }

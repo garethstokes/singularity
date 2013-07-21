@@ -23,8 +23,8 @@ func main() {
     Server()
   }
 
-  if os.Args[1] == "watch" {
-    Watch()
+  if os.Args[1] == "begin" {
+    Begin()
   }
 
 }
