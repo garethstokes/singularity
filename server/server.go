@@ -2,7 +2,6 @@ package server
 
 import (
   "net"
-  "fmt"
   "time"
   "net/http"
   "net/rpc"
@@ -12,7 +11,6 @@ import (
 type Host struct {
   Name string
   Address string
-  Port int
   client * rpc.Client
   errCount int
 }
@@ -78,6 +76,30 @@ func Dial(server string) (* rpc.Client, error) {
   return client, nil
 }
 
+func tick(host * Host) {
+  if host.client == nil {
+    var err error
+    host.client, err = Dial(host.Address)
+    if err != nil {
+      if host.errCount == 3 {
+        log.Infof( "Removing %s from hosts table", host.Name )
+        delete(hosts,host.Name)
+      } else {
+        host.errCount++
+      }
+      return
+    }
+  }
+
+  args := 1
+  result := 1
+  err := host.client.Call("Intelligence.Tick", &args, &result)
+  if err != nil{
+    log.Infof( "Removing %s from hosts table", host.Name )
+    delete(hosts,host.Name)
+  }
+}
+
 func Start() {
   log.Info( "Grid Server" )
   log.Info( "==================" )
@@ -91,32 +113,8 @@ func Start() {
 
   c := time.Tick(1 * time.Second)
   for _ = range c {
-    //log.Infof( "tick" )
     for _, host := range hosts {
-
-      if host.client == nil {
-        server := fmt.Sprintf("%s:%d", host.Address, host.Port)
-        var err error
-        host.client, err = Dial(server)
-        if err != nil {
-          if host.errCount == 3 {
-            log.Infof( "Removing %s from hosts table", host.Name )
-            delete(hosts,host.Name)
-          } else {
-            host.errCount++
-          }
-          continue
-        }
-      }
-
-      args := 1
-      result := 1
-      err := host.client.Call("Singularity.Tick", &args, &result)
-      if err != nil{
-        log.Infof( "Removing %s from hosts table", host.Name )
-        delete(hosts,host.Name)
-      }
-
+      go tick(host)
     }
   }
 }
