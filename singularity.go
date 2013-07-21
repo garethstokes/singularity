@@ -2,7 +2,6 @@ package singularity
 
 import (
   "github.com/garethstokes/singularity/log"
-  "github.com/garethstokes/singularity/server"
   "os"
   "path"
 )
@@ -16,6 +15,7 @@ func Begin(intelligence interface{}) {
   log.Info( "Singularity Test Client" )
   log.Info( "=======================" )
 
+  server := new( Server )
   client, err := server.Dial(ServerAddress)
   if err != nil {
     return
@@ -23,7 +23,7 @@ func Begin(intelligence interface{}) {
 
   wd, _ := os.Getwd()
 
-  me := new( server.Host )
+  me := new( Host )
   me.Name = path.Base(wd) // use the working directory
   me.Address = ClientAddress
 

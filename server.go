@@ -1,4 +1,4 @@
-package server
+package singularity
 
 import (
   "net"
@@ -8,20 +8,12 @@ import (
   "github.com/garethstokes/singularity/log"
 )
 
-type Host struct {
-  Name string
-  Address string
-  client * rpc.Client
-  errCount int
-}
-
-type HostTable map[string] * Host
-type Grid int
-
 var (
   hosts HostTable
   grid Grid
 )
+
+type Server int
 
 func (s * Grid) Register(host * Host, result * int) error {
   for name, _ := range hosts {
@@ -40,7 +32,7 @@ func (s * Grid) Register(host * Host, result * int) error {
   return nil
 }
 
-func Register(object interface{}) error {
+func (s * Server) Register(object interface{}) error {
   if e := rpc.Register(object); e != nil {
     log.Error( "Problem registering" )
     return e
@@ -49,7 +41,7 @@ func Register(object interface{}) error {
   return nil
 }
 
-func BindAndListenOn(address string) error {
+func (s * Server) BindAndListenOn(address string) error {
   l, e := net.Listen("tcp", address)
   if e != nil {
     log.Errorf("listen error:", e.Error())
@@ -64,7 +56,7 @@ func BindAndListenOn(address string) error {
   return nil
 }
 
-func Dial(server string) (* rpc.Client, error) {
+func (s * Server) Dial(server string) (* rpc.Client, error) {
   log.Info( "Dialing " + server )
   client, err := rpc.DialHTTP("tcp", server)
   if err != nil {
@@ -76,10 +68,10 @@ func Dial(server string) (* rpc.Client, error) {
   return client, nil
 }
 
-func tick(host * Host) {
+func (s * Server) tick(host * Host) {
   if host.client == nil {
     var err error
-    host.client, err = Dial(host.Address)
+    host.client, err = s.Dial(host.Address)
     if err != nil {
       if host.errCount == 3 {
         log.Infof( "Removing %s from hosts table", host.Name )
@@ -100,21 +92,21 @@ func tick(host * Host) {
   }
 }
 
-func Start() {
+func (s * Server) Start() {
   log.Info( "Singularity Grid Server" )
   log.Info( "=======================" )
 
   hosts = make( HostTable, 0 )
 
-  Register(& grid)
-  go BindAndListenOn(":4333")
+  s.Register(& grid)
+  go s.BindAndListenOn(":4333")
 
   log.Info( "Entering game loop" )
 
   c := time.Tick(1 * time.Second)
   for _ = range c {
     for _, host := range hosts {
-      go tick(host)
+      go s.tick(host)
     }
   }
 }
