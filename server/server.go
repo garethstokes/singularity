@@ -5,7 +5,7 @@ import (
   "time"
   "net/http"
   "net/rpc"
-  "singularity/log"
+  "github.com/garethstokes/singularity/log"
 )
 
 type Host struct {
@@ -101,8 +101,8 @@ func tick(host * Host) {
 }
 
 func Start() {
-  log.Info( "Grid Server" )
-  log.Info( "==================" )
+  log.Info( "Singularity Grid Server" )
+  log.Info( "=======================" )
 
   hosts = make( HostTable, 0 )
 

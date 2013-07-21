@@ -19,4 +19,8 @@ func main() {
     Create()
   }
 
+  if os.Args[1] == "server" {
+    Server()
+  }
+
 }
