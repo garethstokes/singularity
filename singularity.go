@@ -9,8 +9,7 @@ import (
 
 var (
   ServerAddress = "localhost:4333"
-  ClientPort = 4334
-  ClientAddress = "localhost"
+  ClientAddress = "localhost:4334"
 )
 
 func Begin(intelligence interface{}) {
@@ -28,7 +27,7 @@ func Begin(intelligence interface{}) {
   me.Name = path.Base(wd) // use the working directory
   me.Address = ClientAddress
 
-  log.Infof("Registering singularity for %s:%d", ClientAddress, ClientPort)
+  log.Infof("Registering singularity for %s@%s", me.Name, ClientAddress)
   err = client.Call("Grid.Register", & me, nil)
   if err != nil {
     log.Error(err.Error())

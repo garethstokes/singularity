@@ -23,4 +23,8 @@ func main() {
     Server()
   }
 
+  if os.Args[1] == "watch" {
+    Watch()
+  }
+
 }
