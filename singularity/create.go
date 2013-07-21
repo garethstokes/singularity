@@ -17,9 +17,11 @@ import (
 
 type Intelligence int
 
-var intelligence Intelligence
+var (
+  intelligence Intelligence
+)
 
-func (s * Intelligence) Tick(args * int, result * int) error {
+func (s * Intelligence) Tick(args * singularity.TickData, result * singularity.Move) error {
   // Start hacking here
 
   return nil

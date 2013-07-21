@@ -83,9 +83,12 @@ func (s * Server) tick(host * Host) {
     }
   }
 
-  args := 1
-  result := 1
-  err := host.client.Call("Intelligence.Tick", &args, &result)
+  args := new( TickData )
+  args.Position = &Point{10,10}
+  args.Entities = make( []Entity, 0 )
+
+  var result Move
+  err := host.client.Call("Intelligence.Tick", args, &result)
   if err != nil{
     log.Infof( "Removing %s from hosts table", host.Name )
     delete(hosts,host.Name)

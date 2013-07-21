@@ -11,5 +11,21 @@ type Host struct {
   errCount int
 }
 
+type TickData struct {
+  Position * Point
+  Entities []Entity
+}
+
+type Entity struct {
+  Name string
+  Position * Point
+}
+
+type Point struct {
+  X int
+  Y int
+}
+
 type HostTable map[string] * Host
 type Grid int
+type Move int
