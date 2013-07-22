@@ -11,6 +11,14 @@ var (
   ClientAddress = "localhost:4334"
 )
 
+const (
+  _                                   = iota
+  ACTION_MOVE_FORWARD    MoveAction   = (10 * iota)
+  ACTION_MOVE_BACKWARD
+  ACTION_MOVE_STOP
+  ACTION_MOVE_TURN
+)
+
 func Begin(intelligence interface{}) {
   log.Info( "Singularity Test Client" )
   log.Info( "=======================" )

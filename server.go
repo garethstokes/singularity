@@ -8,26 +8,29 @@ import (
   "github.com/garethstokes/singularity/log"
 )
 
-var (
+type Server struct {
   hosts HostTable
   grid Grid
-)
+  environment * Environment
+}
 
-type Server int
+type Grid struct {
+  server * Server
+}
 
-func (s * Grid) Register(host * Host, result * int) error {
-  for name, _ := range hosts {
+func (g * Grid) Register(host * Host, result * int) error {
+  for name, _ := range g.server.hosts {
     if name == host.Name {
       log.Infof( "Register Update :: %s", host.Name )
       host.errCount = 0
-      hosts[host.Name] = host
+      g.server.hosts[host.Name] = host
       return nil
     }
   }
 
   log.Infof( "Register New :: %s", host.Name )
-  //hosts = append( hosts, * host )
-  hosts[host.Name] = host
+  g.server.hosts[host.Name] = host
+  g.server.environment.AddPlayer(host.Name)
 
   return nil
 }
@@ -75,7 +78,7 @@ func (s * Server) tick(host * Host) {
     if err != nil {
       if host.errCount == 3 {
         log.Infof( "Removing %s from hosts table", host.Name )
-        delete(hosts,host.Name)
+        delete(s.hosts,host.Name)
       } else {
         host.errCount++
       }
@@ -83,32 +86,47 @@ func (s * Server) tick(host * Host) {
     }
   }
 
-  args := new( TickData )
-  args.Position = &Point{10,10}
-  args.Entities = make( []Entity, 0 )
+  entities := s.environment.Entities
 
-  var result Move
-  err := host.client.Call("Intelligence.Tick", args, &result)
+  args := new( TickData )
+  args.Player = entities[host.Name]
+  args.VisableThings = make( [](* Entity), len(entities) )
+  i := 0
+  for _, e := range entities {
+    args.VisableThings[i] = e
+    i++;
+  }
+
+  result := new(Move)
+  result.Direction = &Point{0,0}
+  result.Action = ACTION_MOVE_STOP
+
+  err := host.client.Call("Intelligence.Tick", args, result)
   if err != nil{
     log.Infof( "Removing %s from hosts table", host.Name )
-    delete(hosts,host.Name)
+    delete(s.hosts,host.Name)
   }
+
+  s.environment.Step(host.Name, result)
 }
 
 func (s * Server) Start() {
   log.Info( "Singularity Grid Server" )
   log.Info( "=======================" )
 
-  hosts = make( HostTable, 0 )
+  s.hosts = make( HostTable, 0 )
+  s.environment = NewEnvironment()
 
-  s.Register(& grid)
+  grid := new(Grid)
+  grid.server = s
+  s.Register(grid)
   go s.BindAndListenOn(":4333")
 
   log.Info( "Entering game loop" )
 
   c := time.Tick(1 * time.Second)
   for _ = range c {
-    for _, host := range hosts {
+    for _, host := range s.hosts {
       go s.tick(host)
     }
   }

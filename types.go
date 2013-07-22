@@ -12,13 +12,14 @@ type Host struct {
 }
 
 type TickData struct {
-  Position * Point
-  Entities []Entity
+  Player * Entity
+  VisableThings [](* Entity)
 }
 
 type Entity struct {
   Name string
   Position * Point
+  Direction * Point
 }
 
 type Point struct {
@@ -27,5 +28,10 @@ type Point struct {
 }
 
 type HostTable map[string] * Host
-type Grid int
-type Move int
+
+type MoveAction int
+
+type Move struct {
+  Direction * Point
+  Action MoveAction
+}
