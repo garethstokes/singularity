@@ -20,6 +20,8 @@ type Entity struct {
   Name string
   Position * Vector
   Direction * Vector
+  Speed int
+  Action MoveAction
 }
 
 type HostTable map[string] * Host

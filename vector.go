@@ -20,6 +20,13 @@ func (v1 * Vector) Add(v2 * Vector) (* Vector) {
   }
 }
 
+func (v1 * Vector) Subtract(v2 * Vector) (* Vector) {
+  return &Vector{
+    math.Floor(v1.X - v2.X),
+    math.Floor(v1.Y - v2.Y),
+  }
+}
+
 func (v * Vector) Length() float64 {
   return (v.X * v.X) + (v.Y * v.Y)
 }

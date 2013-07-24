@@ -46,11 +46,21 @@ func (e * Environment) AddPlayer(name string) {
 
 func (e * Environment) Step(playername string, move * Move) {
   player := e.Entities[playername]
+  player.Action = move.Action
 
   switch move.Action {
     case ACTION_MOVE_FORWARD:
       // extropolate
       n := player.Direction.Normalise().Scale(10)
       player.Position = player.Position.Add(n)
+    case ACTION_MOVE_BACKWARD:
+      n := player.Direction.Normalise().Scale(10)
+      player.Position = player.Position.Subtract(n)
+    case ACTION_MOVE_TURN:
+      d := move.Direction.Normalise()
+      player.Direction = d
+    case ACTION_MOVE_STOP:
+      // do nothing (regen stamina maybe?)
   }
+
 }
