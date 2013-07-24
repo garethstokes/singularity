@@ -18,13 +18,8 @@ type TickData struct {
 
 type Entity struct {
   Name string
-  Position * Point
-  Direction * Point
-}
-
-type Point struct {
-  X int
-  Y int
+  Position * Vector
+  Direction * Vector
 }
 
 type HostTable map[string] * Host
@@ -32,6 +27,6 @@ type HostTable map[string] * Host
 type MoveAction int
 
 type Move struct {
-  Direction * Point
+  Direction * Vector
   Action MoveAction
 }

@@ -98,7 +98,7 @@ func (s * Server) tick(host * Host) {
   }
 
   result := new(Move)
-  result.Direction = &Point{0,0}
+  result.Direction = &Vector{0,0}
   result.Action = ACTION_MOVE_STOP
 
   err := host.client.Call("Intelligence.Tick", args, result)
