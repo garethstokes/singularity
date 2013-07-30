@@ -27,4 +27,7 @@ func main() {
     Begin()
   }
 
+  if os.Args[1] == "web" {
+    Web()
+  }
 }

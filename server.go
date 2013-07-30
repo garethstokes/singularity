@@ -6,12 +6,19 @@ import (
   "net/http"
   "net/rpc"
   "github.com/garethstokes/singularity/log"
+  "github.com/garethstokes/singularity/web"
+)
+
+var (
+  gameAddress = "localhost:4333"
+  webAddress = "localhost:8080"
 )
 
 type Server struct {
   hosts HostTable
   grid Grid
   environment * Environment
+  webserver * web.WebServer
 }
 
 type Grid struct {
@@ -105,14 +112,22 @@ func (s * Server) tick(host * Host) {
   if err != nil{
     log.Infof( "Removing %s from hosts table", host.Name )
     delete(s.hosts,host.Name)
+    return
   }
 
   s.environment.Step(host.Name, result)
+
+  player := s.environment.Entities[host.Name]
+  s.webserver.Broadcast(toJson(player))
 }
 
 func (s * Server) Start() {
   log.Info( "Singularity Grid Server" )
   log.Info( "=======================" )
+
+  // web server + socket
+  s.webserver = web.NewWebServer()
+  go s.webserver.Start()
 
   s.hosts = make( HostTable, 0 )
   s.environment = NewEnvironment()

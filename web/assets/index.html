@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>the singularity</title>
+    <script type="text/javascript">
+      (function() {
+        "use strict";
+
+        if (typeof window.WebSocket == 'function') {
+          var address = "ws://localhost:8080";
+          var endpoint = "/ws";
+          var conn = new WebSocket(address + endpoint);
+
+          conn.onopen = function() { console.log('ws open'); }
+          conn.onclose = function() { console.log('ws close'); }
+
+          conn.onerror = function(error) {
+            console.log(error);
+          }
+
+          conn.onmessage = function(message) {
+            console.log(message);
+            var container = document.getElementById('results');
+            container.innerHTML += '<li>' + message.data + "<\/li>";
+          };
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="errors"></div>
+    <ul id="results"></ul>
+  </body>
+</html>

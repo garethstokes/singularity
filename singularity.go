@@ -4,6 +4,7 @@ import (
   "github.com/garethstokes/singularity/log"
   "os"
   "path"
+  "encoding/json"
 )
 
 var (
@@ -19,9 +20,17 @@ const (
   ACTION_MOVE_TURN
 )
 
+func toJson(item interface{}) string {
+	b, err := json.Marshal(item)
+	if err != nil {
+    log.Errorf(err.Error())
+	}
+	return string(b);
+}
+
 func Begin(intelligence interface{}) {
-  log.Info( "Singularity Test Client" )
-  log.Info( "=======================" )
+  log.Info( "Singularity Client" )
+  log.Info( "==================" )
 
   server := new( Server )
   client, err := server.Dial(ServerAddress)

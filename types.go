@@ -17,11 +17,11 @@ type TickData struct {
 }
 
 type Entity struct {
-  Name string
-  Position * Vector
-  Direction * Vector
-  Speed int
-  Action MoveAction
+  Name string         `json:"name"`
+  Position * Vector   `json:"position"`
+  Direction * Vector  `json:"direction"`
+  Speed int           `json:"-"`
+  Action MoveAction   `json:"-"`
 }
 
 type HostTable map[string] * Host
