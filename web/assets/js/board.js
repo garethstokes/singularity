@@ -31,10 +31,10 @@ singularity.board = function() {
     canvas.setAttribute('width', config.width + 1);
     canvas.setAttribute('height', config.height + 1);
 
-    canvas.style.margin = '0 auto';
     canvas.style.position = 'absolute';
 
-    document.body.appendChild(canvas);
+    var board = document.getElementById('board');
+    board.appendChild(canvas);
 
     return {
       canvas: canvas,

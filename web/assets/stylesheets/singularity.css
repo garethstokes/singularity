@@ -1,3 +1,9 @@
 body {
   background-color: #090B18;
 }
+
+#board {
+  position: relative;
+  width: 800px;
+  margin: 0 auto;
+}
