@@ -2,9 +2,23 @@
 <html>
   <head>
     <title>the singularity</title>
+    <link rel="stylesheet" type="text/css" href="stylesheets/singularity.css">
+    <script type="text/javascript" src="js/board.js"></script>
     <script type="text/javascript">
       (function() {
         "use strict";
+
+        var board = singularity.board();
+
+        var config = {
+          width: 800,
+          height: 800
+        };
+
+        window.onload = function() {
+          board.set(config);
+          board.start();
+        };
 
         if (typeof window.WebSocket == 'function') {
           var address = "ws://localhost:8080";
@@ -20,8 +34,7 @@
 
           conn.onmessage = function(message) {
             console.log(message);
-            var container = document.getElementById('results');
-            container.innerHTML += '<li>' + message.data + "<\/li>";
+            board.update(JSON.parse(message.data));
           };
         }
       })()
@@ -29,6 +42,6 @@
   </head>
   <body>
     <div id="errors"></div>
-    <ul id="results"></ul>
+    <div id="board" />
   </body>
 </html>

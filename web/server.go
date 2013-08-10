@@ -71,14 +71,33 @@ func (w * WebServer) Start() {
     }
   }()
 
+  gopath := os.Getenv("GOPATH")
+  basepath := gopath + "/src/github.com/garethstokes/singularity/web/assets/"
+
+  http.Handle("/ws", websocket.Handler(connectionWebSocketHandler))
+
   http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-    gopath := os.Getenv("GOPATH")
-    var filename = gopath + "/src/github.com/garethstokes/singularity/web/assets/index.html"
+    p := r.URL.Path
+
+    if len(p) >= 4 && p[:4] == "/js/" {
+      http.ServeFile(w, r, path.Join(basepath + p))
+      return
+    }
+
+    if len(p) >= 13 && p[:13] == "/stylesheets/" {
+      http.ServeFile(w, r, path.Join(basepath + p))
+      return
+    }
+
+    if len(p) >= 8 && p[:8] == "/images/" {
+      http.ServeFile(w, r, path.Join(basepath + p))
+      return
+    }
+
+    var filename = basepath + "index.html"
     filename = path.Clean(filename)
     http.ServeFile(w, r, filename)
   })
-
-  http.Handle("/ws", websocket.Handler(connectionWebSocketHandler))
 
   err := http.ListenAndServe(address, nil)
   if err != nil {

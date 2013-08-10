@@ -13,7 +13,7 @@ type Environment struct {
 func NewEnvironment() * Environment {
   environment := new(Environment)
   environment.Entities = make(map[string] * Entity,0)
-  environment.BoardSize = &Vector{1000,1000}
+  environment.BoardSize = &Vector{800,800}
   return environment
 }
 
