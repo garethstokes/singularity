@@ -68,6 +68,19 @@ singularity.board = function() {
         var player = players[name];
         var position = player.position;
         layer.context.drawImage(player.avatar, position.x, position.y);
+
+        var context = layer.context;
+
+        context.font = '12px helvetica';
+        context.textBaseline = 'top';
+        context.fillStyle = 'white';
+
+        var x = position.x,
+            y = position.y;
+        
+        x = x - (4 * (player.name.length /2));
+        y = y - 20;
+        context.fillText(player.name, x, y);
       }
     },
 
