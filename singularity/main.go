@@ -23,8 +23,8 @@ func main() {
     Server()
   }
 
-  if os.Args[1] == "begin" {
-    Begin()
+  if os.Args[1] == "join" {
+    Join()
   }
 
   if os.Args[1] == "web" {

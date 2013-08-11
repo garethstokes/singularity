@@ -45,6 +45,6 @@ func run() {
   }
 }
 
-func Begin() {
+func Join() {
   run()
 }
