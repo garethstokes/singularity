@@ -109,16 +109,21 @@ func (s * Server) tick(host * Host) {
   result.Action = ACTION_MOVE_STOP
 
   err := host.client.Call("Intelligence.Tick", args, result)
-  if err != nil{
+  if err != nil {
+
     log.Infof( "Removing %s from hosts table", host.Name )
     delete(s.hosts,host.Name)
+
+    player := s.environment.Entities[host.Name]
+    s.webserver.Broadcast(toJson("remove", player))
+
     return
   }
 
   s.environment.Step(host.Name, result)
 
   player := s.environment.Entities[host.Name]
-  s.webserver.Broadcast(toJson(player))
+  s.webserver.Broadcast(toJson("update", player))
 }
 
 func (s * Server) Start() {
@@ -135,7 +140,7 @@ func (s * Server) Start() {
   grid := new(Grid)
   grid.server = s
   s.Register(grid)
-  go s.BindAndListenOn(":4333")
+  go s.BindAndListenOn(gameAddress)
 
   log.Info( "Entering game loop" )
 

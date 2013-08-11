@@ -147,6 +147,10 @@ singularity.board = function() {
       }
       
       players[player.name].position = player.position;
+    },
+
+    remove: function(player) {
+      delete players[player.name];
     }
   };
 

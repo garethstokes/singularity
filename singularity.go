@@ -20,8 +20,10 @@ const (
   ACTION_MOVE_TURN
 )
 
-func toJson(item interface{}) string {
-	b, err := json.Marshal(item)
+func toJson(key string, item interface{}) string {
+  kv := make(map[string]interface{})
+  kv[key] = item
+	b, err := json.Marshal(kv)
 	if err != nil {
     log.Errorf(err.Error())
 	}

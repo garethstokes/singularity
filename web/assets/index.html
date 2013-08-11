@@ -29,7 +29,17 @@
 
           conn.onmessage = function(message) {
             //console.log(message);
-            board.update(JSON.parse(message.data));
+            message = JSON.parse(message.data);
+            var key = Object.keys(message)[0];
+
+            if( key === 'update' ) {
+              board.update(message[key]);
+              return;
+            }
+
+            if( key === 'remove' ) {
+              board.remove(message[key]);
+            }
           };
         }
       })()
