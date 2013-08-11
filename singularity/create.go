@@ -23,6 +23,7 @@ var (
 
 func (s * Intelligence) Tick(args * singularity.TickData, result * singularity.Move) error {
   // Start hacking here
+  result.Action = singularity.ACTION_MOVE_FORWARD
 
   return nil
 }
