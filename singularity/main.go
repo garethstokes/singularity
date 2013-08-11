@@ -5,8 +5,30 @@ import (
   "fmt"
 )
 
+var message = `
+  -={ the singularity is near }=-
+
+  a new digital entity has arrived and we now live 
+  on a planet in which humans are no longer
+  the superior intellect. we must evolve, adapt 
+  to this new digital environment and prove 
+  once and for all, that humanity is worth saving.
+
+  the commands to enter the game are as follows...
+
+  create:
+  singularity create <player name>
+
+  server:
+  singularity server
+
+  join:
+  singularity join <player name>
+
+`
+
 func fail() {
-  fmt.Print("the singularity has failed.\n")
+  fmt.Print(message)
 }
 
 func main() {
