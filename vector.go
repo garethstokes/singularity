@@ -4,10 +4,6 @@ import (
   "math"
 )
 
-const (
-  tolerance = 0.0001
-)
-
 type Vector struct {
   X float64   `json:"x"`
   Y float64   `json:"y"`
@@ -27,6 +23,13 @@ func (v1 * Vector) Subtract(v2 * Vector) (* Vector) {
   }
 }
 
+func (v1 * Vector) Multiply(s float64) (* Vector) {
+  return &Vector{
+    v1.X * s,
+    v1.Y * s,
+  }
+}
+
 func (v * Vector) Length() float64 {
   return (v.X * v.X) + (v.Y * v.Y)
 }
@@ -39,28 +42,24 @@ func (v * Vector) Magnitude() float64 {
  * converts the vector to a unit vector
  */
 func (v * Vector) Normalise() (* Vector) {
-  m := math.Sqrt( (v.X * v.X) + (v.Y * v.Y) )
-  if m < tolerance {
-    m = 1
-  }
-
-  v.X = v.X / m
-  v.Y = v.Y / m
-
-  if math.Abs(v.X) < tolerance {
-    v.X = 0.0
-  }
-
-  if math.Abs(v.Y) < tolerance {
-    v.Y = 0.0
-  }
-
-  return v
+  return v.Multiply(1.0/v.Length())
 }
 
 func (v * Vector) Scale(factor float64) (* Vector) {
   result := new(Vector)
   result.X = v.X * factor
-  result.Y = v.X * factor
+  result.Y = v.Y * factor
   return result
+}
+
+func (v * Vector) Negate() (* Vector) {
+  return &Vector{-v.X,-v.Y}
+}
+
+func (v * Vector) NegateX() (* Vector) {
+  return &Vector{-v.X,v.Y}
+}
+
+func (v * Vector) NegateY() (* Vector) {
+  return &Vector{v.X,-v.Y}
 }

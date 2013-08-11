@@ -108,7 +108,8 @@ singularity.board = function() {
         };
         return;
       }
-
+      
+      player.position.y = config.height - player.position.y;
       players[player.name].position = player.position;
     }
   };

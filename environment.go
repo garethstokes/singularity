@@ -3,6 +3,7 @@ package singularity
 import (
   "math/rand"
   "time"
+  "github.com/garethstokes/singularity/log"
 )
 
 type Environment struct {
@@ -51,7 +52,8 @@ func (e * Environment) Step(playername string, move * Move) {
   switch move.Action {
     case ACTION_MOVE_FORWARD:
       // extropolate
-      n := player.Direction.Normalise().Scale(10)
+      n := player.Direction.Normalise().Scale(5)
+      log.Infof("n: %@", n)
       player.Position = player.Position.Add(n)
     case ACTION_MOVE_BACKWARD:
       n := player.Direction.Normalise().Scale(10)
@@ -63,4 +65,49 @@ func (e * Environment) Step(playername string, move * Move) {
       // do nothing (regen stamina maybe?)
   }
 
+  log.Infof("direction: %@", player.Direction)
+  log.Infof("position: %@", player.Position)
+  if player.Position.X < 0 || player.Position.X > e.BoardSize.X {
+    player.Direction = player.Direction.NegateX()
+
+    if player.Position.X < 0 {
+      player.Position.X = 0
+    } else {
+      player.Position.X = e.BoardSize.X
+    }
+
+    log.Infof("after x: %@", player.Direction)
+
+    // ...and try again
+    log.Infof("trying again: %@", player.Position)
+    e.Step(playername, move)
+  }
+
+  if player.Position.Y < 0 || player.Position.Y > e.BoardSize.Y {
+    player.Direction = player.Direction.NegateY()
+
+    if player.Position.Y < 0 {
+      player.Position.Y = 0
+    } else {
+      player.Position.Y = e.BoardSize.Y
+    }
+
+    log.Infof("after y: %@", player.Direction)
+
+    // ...and try again
+    log.Infof("trying again: %@", player.Position)
+    e.Step(playername, move)
+  }
+}
+
+func (e * Environment) PlayerIsOutside(player * Entity) bool {
+  if player.Position.X < 0 || player.Position.X > e.BoardSize.X {
+    return true
+  }
+
+  if player.Position.Y < 0 || player.Position.Y > e.BoardSize.Y {
+    return true
+  }
+
+  return false;
 }
