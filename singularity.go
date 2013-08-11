@@ -52,5 +52,5 @@ func Begin(intelligence interface{}) {
 
 
   server.Register(intelligence)
-  server.BindAndListenOn(":4334")
+  server.BindAndListenOn(ClientAddress)
 }

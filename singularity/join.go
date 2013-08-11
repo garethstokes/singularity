@@ -8,7 +8,6 @@ import (
 )
 
 func buildpath(executable string) (string, error) {
-  //cmdline := fmt.Sprintf("%s/bin/go run %s/src/singularity/%s/garrydanger.go", runtime.GOROOT(), gopath, intelligence)
   p, err := exec.LookPath("go")
   if err != nil {
     fmt.Printf("ERROR: %s\n", err.Error())
