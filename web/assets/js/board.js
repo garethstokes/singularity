@@ -6,18 +6,32 @@ singularity.board = function() {
   /*jshint browser:true, latedef:false */
 
   var color = [
-    'rgba(252,159,255, 0.3)',
-    'rgba(250,111,207, 0.3)',
-    'rgba(201,157,220, 0.3)'
+    'rgba(252,159,255, {{opacity}})',
+    'rgba(250,111,207, {{opacity}})',
+    'rgba(201,157,220, {{opacity}})'
   ];
 
+  color.opacity = "0.3";
+
   color.random = function() {
-    return color[~~(Math.random() * 10 % color.length)];
+    var c = color[~~(Math.random() * 10 % color.length)];
+    c = c.replace('{{opacity}}', this.opacity);
+    return c;
+  };
+
+  color.border = function() {
+    var c = color[~~(Math.random() * 10 % color.length)];
+    c = c.replace('{{opacity}}', "0.15");
+    return c;
   };
 
   var config = {
     height: 800,
-    width: 800
+    width: 800,
+    padding: {
+      x: 90,
+      y: 50
+    }
   };
 
   var players = {},
@@ -28,8 +42,8 @@ singularity.board = function() {
         context = canvas.getContext('2d');
 
     canvas.id = id;
-    canvas.setAttribute('width', config.width + 1);
-    canvas.setAttribute('height', config.height + 1);
+    canvas.setAttribute('width', config.width + config.padding.x + 1);
+    canvas.setAttribute('height', config.height + config.padding.y + 1);
 
     canvas.style.position = 'absolute';
 
@@ -45,14 +59,25 @@ singularity.board = function() {
   return {
     drawBackground: function() {
 
-      var context = layers.background.context;
-      context.fillStyle = color.random();
+      var context = layers.background.context,
+          canvas = layers.background.canvas,
+          x,y;
 
-      for( var x = 0.5; x <= config.width + 0.5; x = x + 10 ) {
-        for( var y = 0.5; y <= config.height + 0.5; y = y + 10 ) {
+      canvas.width = canvas.width;
+
+      for( x = 0.5; x <= canvas.width + 0.5; x = x + 10 ) {
+        for( y = 0.5; y <= canvas.height + 0.5; y = y + 10 ) {
+
+          if( x <= 10.5 || y <= 10.5 ||
+              x >= canvas.width - 20.5 || 
+              y >= canvas.height - 20.5 ) {
+            context.fillStyle = color.border();
+          } else {
+            context.fillStyle = color.random();
+          }
+
           context.clearRect(x, y, 10, 10);
           context.fillRect(x, y, 10, 10);
-          context.fillStyle = color.random();
         }
       }
     },
@@ -67,25 +92,31 @@ singularity.board = function() {
       for( var name in players ) {
         var player = players[name];
         var position = player.position;
-        layer.context.drawImage(player.avatar, position.x, position.y);
+        layer.context.drawImage(
+          player.avatar, 
+          position.x - player.avatar.width /2, 
+          position.y - player.avatar.height /2
+        );
 
         var context = layer.context;
 
-        context.font = '12px helvetica';
+        context.font = '10px pirulen';
         context.textBaseline = 'top';
         context.fillStyle = 'white';
 
-        var x = position.x,
-            y = position.y;
+        var x = position.x - player.avatar.width /2,
+            y = position.y - player.avatar.height /2;
         
-        x = x - (4 * (player.name.length /2));
+        x = x - (7 * (player.name.length /2));
         y = y - 20;
         context.fillText(player.name, x, y);
       }
     },
 
     set: function(c) {
-      config = c;
+      if (typeof c !== 'undefined') {
+        config = c;
+      }
     },
 
     start: function() {
@@ -98,6 +129,12 @@ singularity.board = function() {
     },
 
     update: function(player) {
+      // transform to cartisian coordinates
+      player.position.y = config.height - player.position.y;
+
+      player.position.x += config.padding.x /2;
+      player.position.y += config.padding.y /2;
+
       if (typeof players[player.name] === 'undefined') {
         var img = new Image();
         img.src = 'images/player.png';
@@ -109,7 +146,6 @@ singularity.board = function() {
         return;
       }
       
-      player.position.y = config.height - player.position.y;
       players[player.name].position = player.position;
     }
   };

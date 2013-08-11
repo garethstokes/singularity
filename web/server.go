@@ -94,6 +94,11 @@ func (w * WebServer) Start() {
       return
     }
 
+    if len(p) >= 7 && p[:7] == "/fonts/" {
+      http.ServeFile(w, r, path.Join(basepath + p))
+      return
+    }
+
     var filename = basepath + "index.html"
     filename = path.Clean(filename)
     http.ServeFile(w, r, filename)

@@ -10,13 +10,8 @@
 
         var board = singularity.board();
 
-        var config = {
-          width: 800,
-          height: 800
-        };
-
         window.onload = function() {
-          board.set(config);
+          board.set();
           board.start();
         };
 
@@ -33,7 +28,7 @@
           }
 
           conn.onmessage = function(message) {
-            console.log(message);
+            //console.log(message);
             board.update(JSON.parse(message.data));
           };
         }
@@ -41,7 +36,11 @@
     </script>
   </head>
   <body>
-    <div id="errors"></div>
-    <div id="board"></div>
+    <div id="header">
+      <h1>THE SINGULARITY</h1>
+    </div>
+    <div id="board">
+      <div id="errors"></div>
+    </div>
   </body>
 </html>

@@ -1,9 +1,29 @@
+@font-face {
+  font-family: 'octin-spraypaint';
+  src: url('/fonts/octin-spraypaint.woff');
+}
+
+@font-face {
+  font-family: 'pirulen';
+  src: url('/fonts/pirulen.woff');
+}
+
 body {
   background-color: #090B18;
+  color: #ffffff;
+}
+
+h1 {
+  font-family: 'octin-spraypaint';
+}
+
+#header {
+  width: 900px;
+  margin: 0 auto;
 }
 
 #board {
   position: relative;
-  width: 800px;
+  width: 900px;
   margin: 0 auto;
 }

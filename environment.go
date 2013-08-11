@@ -52,7 +52,7 @@ func (e * Environment) Step(playername string, move * Move) {
   switch move.Action {
     case ACTION_MOVE_FORWARD:
       // extropolate
-      n := player.Direction.Normalise().Scale(5)
+      n := player.Direction.Normalise().Scale(2)
       log.Infof("n: %@", n)
       player.Position = player.Position.Add(n)
     case ACTION_MOVE_BACKWARD:
