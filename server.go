@@ -5,6 +5,7 @@ import (
   "time"
   "net/http"
   "net/rpc"
+  "errors"
   "github.com/garethstokes/singularity/log"
   "github.com/garethstokes/singularity/web"
 )
@@ -26,7 +27,16 @@ type Grid struct {
 }
 
 func (g * Grid) Register(host * Host, result * int) error {
-  for name, _ := range g.server.hosts {
+  for name, h := range g.server.hosts {
+
+    // do a simple check if someone else is already using 
+    // that port
+    if host.Address == h.Address {
+      return errors.New("ClientAddress is already in use.")
+    }
+
+    // maybe the user is already registered and just wants
+    // to update their information?
     if name == host.Name {
       log.Infof( "Register Update :: %s", host.Name )
       host.errCount = 0
