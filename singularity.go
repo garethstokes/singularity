@@ -1,3 +1,7 @@
+/*
+  Singularity client 
+*/
+
 package singularity
 
 import (
@@ -42,7 +46,7 @@ func Begin(intelligence interface{}) {
 
   wd, _ := os.Getwd()
 
-  me := new( Host )
+  me := new( RpcHost )
   me.Name = path.Base(wd) // use the working directory
   me.Address = ClientAddress
 

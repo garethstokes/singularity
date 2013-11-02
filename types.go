@@ -1,16 +1,5 @@
 package singularity
 
-import (
-  "net/rpc"
-)
-
-type Host struct {
-  Name string
-  Address string
-  client * rpc.Client
-  errCount int
-}
-
 type TickData struct {
   Player * Entity
   VisableThings [](* Entity)
@@ -24,7 +13,7 @@ type Entity struct {
   Action MoveAction   `json:"-"`
 }
 
-type HostTable map[string] * Host
+type HostTable map[string] Movable
 
 type MoveAction int
 

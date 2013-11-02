@@ -1,3 +1,7 @@
+/*
+  Singularity server 
+*/
+
 package singularity
 
 import (
@@ -26,12 +30,13 @@ type Grid struct {
   server * Server
 }
 
-func (g * Grid) Register(host * Host, result * int) error {
+func (g * Grid) Register(host * RpcHost, result * int) error {
   for name, h := range g.server.hosts {
+
 
     // do a simple check if someone else is already using 
     // that port
-    if host.Address == h.Address {
+    if host.Address == h.getAddress() {
       return errors.New("ClientAddress is already in use.")
     }
 
@@ -39,7 +44,7 @@ func (g * Grid) Register(host * Host, result * int) error {
     // to update their information?
     if name == host.Name {
       log.Infof( "Register Update :: %s", host.Name )
-      host.errCount = 0
+      host.resetErrors()
       g.server.hosts[host.Name] = host
       return nil
     }
@@ -88,51 +93,15 @@ func (s * Server) Dial(server string) (* rpc.Client, error) {
   return client, nil
 }
 
-func (s * Server) tick(host * Host) {
-  if host.client == nil {
-    var err error
-    host.client, err = s.Dial(host.Address)
-    if err != nil {
-      if host.errCount == 3 {
-        log.Infof( "Removing %s from hosts table", host.Name )
-        delete(s.hosts,host.Name)
-      } else {
-        host.errCount++
-      }
-      return
-    }
-  }
-
-  entities := s.environment.Entities
-
-  args := new( TickData )
-  args.Player = entities[host.Name]
-  args.VisableThings = make( [](* Entity), len(entities) )
-  i := 0
-  for _, e := range entities {
-    args.VisableThings[i] = e
-    i++;
-  }
-
-  result := new(Move)
-  result.Direction = &Vector{0,0}
-  result.Action = ACTION_MOVE_STOP
-
-  err := host.client.Call("Intelligence.Tick", args, result)
+func (s * Server) tick(host Movable) {
+  move, err := host.PerformMoveOn(s)
   if err != nil {
-
-    log.Infof( "Removing %s from hosts table", host.Name )
-    delete(s.hosts,host.Name)
-
-    player := s.environment.Entities[host.Name]
-    s.webserver.Broadcast(toJson("remove", player))
-
     return
   }
 
-  s.environment.Step(host.Name, result)
+  s.environment.Step(host.getName(), move)
 
-  player := s.environment.Entities[host.Name]
+  player := s.environment.Entities[host.getName()]
   s.webserver.Broadcast(toJson("update", player))
 }
 
