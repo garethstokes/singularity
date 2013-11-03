@@ -59,7 +59,7 @@ func (g * Grid) Register(host * RpcHost, result * int) error {
   g.server.hosts[host.Name] = host
   g.server.rpcHosts[host.Name] = host
 
-  g.server.environment.AddPlayer(host.Name)
+  g.server.environment.AddPlayer(host.Name, "human")
 
   return nil
 }
@@ -87,7 +87,7 @@ func (s * Server) AddComputerHost() {
   player.Name = name // use the working directory
 
   s.hosts[name] = player
-  s.environment.AddPlayer(player.Name)
+  s.environment.AddPlayer(player.Name, "ai")
 }
 
 func (s * Server) Register(object interface{}) error {

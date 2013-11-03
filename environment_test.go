@@ -7,7 +7,7 @@ import (
 
 func TestAddPlayer(t * testing.T) {
   e := singularity.NewEnvironment()
-  e.AddPlayer("garrydanger")
+  e.AddPlayer("garrydanger", "human")
 
   player := e.Entities["garrydanger"]
   if player == nil {
@@ -25,7 +25,7 @@ func TestAddPlayer(t * testing.T) {
 
 func TextPlayerCantExceedBoundry(t * testing.T) {
   e := singularity.NewEnvironment()
-  e.AddPlayer("garrydanger")
+  e.AddPlayer("garrydanger", "human")
   player := e.Entities["garrydanger"]
 
   if player == nil {

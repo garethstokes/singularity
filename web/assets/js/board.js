@@ -135,9 +135,21 @@ singularity.board = function() {
       player.position.x += config.padding.x /2;
       player.position.y += config.padding.y /2;
 
-      if (typeof players[player.name] === 'undefined') {
+      function imageFor(player) { 
         var img = new Image();
-        img.src = 'images/player.png';
+        if (player.classifier === "human") {
+          img.src = 'images/player.png';
+        }
+
+        if (player.classifier === "ai") {
+          img.src = 'images/ai.png';
+        }
+
+        return img;
+      }
+
+      if (typeof players[player.name] === 'undefined') {
+        var img = imageFor(player);
         img.onload = function() {
           player.avatar = img;
           players[player.name] = player;

@@ -11,6 +11,7 @@ type Entity struct {
   Direction * Vector  `json:"direction"`
   Speed int           `json:"-"`
   Action MoveAction   `json:"-"`
+  Classifier string   `json:"classifier"`
 }
 
 type HostTable map[string] Movable

@@ -34,9 +34,10 @@ func (e * Environment) RandomNormalisedVector() (* Vector) {
   return v.Normalise()
 }
 
-func (e * Environment) AddPlayer(name string) {
+func (e * Environment) AddPlayer(name string, classifier string) {
   player := new(Entity)
   player.Name = name
+  player.Classifier = classifier
 
   // position the player on the field randomly
   player.Position = e.RandomScalar()
