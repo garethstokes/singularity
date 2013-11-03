@@ -9,19 +9,30 @@
         "use strict";
 
         var board = singularity.board();
+        var conn;
+        var isConnected = false;
 
         window.onload = function() {
           board.set();
           board.start();
         };
 
-        if (typeof window.WebSocket == 'function') {
+        function connect() {
           var address = "ws://localhost:8080";
           var endpoint = "/ws";
-          var conn = new WebSocket(address + endpoint);
 
-          conn.onopen = function() { console.log('ws open'); }
-          conn.onclose = function() { console.log('ws close'); }
+          conn = new WebSocket(address + endpoint);
+
+          conn.onopen = function() { 
+            console.log('ws open'); 
+            isConnected = true;
+            board.reset();
+          }
+
+          conn.onclose = function() { 
+            console.log('ws close'); 
+            isConnected = false;
+          }
 
           conn.onerror = function(error) {
             console.log(error);
@@ -41,6 +52,16 @@
               board.remove(message[key]);
             }
           };
+
+          setInterval(function() {
+            if (isConnected === false) {
+              connect();
+            }
+          }, 1000);
+        };
+
+        if (typeof window.WebSocket == 'function') {
+          connect();
         }
       })()
     </script>

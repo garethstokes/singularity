@@ -2,7 +2,7 @@ package singularity
 
 import (
   "net/rpc"
-  "github.com/garethstokes/singularity/log"
+  //"github.com/garethstokes/singularity/log"
 )
 
 type RpcHost struct {
@@ -25,13 +25,9 @@ func (host * RpcHost) PerformMoveOn(s * Server) (* Move, error) {
     host.client, err = s.Dial(host.Address)
     if err != nil {
       if host.errCount == 3 {
-        log.Infof( "Removing %s from hosts table", host.Name )
-        delete(s.hosts,host.Name)
-        delete(s.rpcHosts, host.Name)
-      } else {
-        host.errCount++
+        return nil, err
       }
-      return nil, err
+      return nil, nil
     }
   }
 
@@ -52,10 +48,6 @@ func (host * RpcHost) PerformMoveOn(s * Server) (* Move, error) {
 
   err := host.client.Call("Intelligence.Tick", args, result)
   if err != nil {
-
-    log.Infof( "Removing %s from hosts table", host.Name )
-    delete(s.hosts,host.Name)
-    delete(s.rpcHosts, host.Name)
 
     player := s.environment.Entities[host.Name]
     s.webserver.Broadcast(toJson("remove", player))

@@ -129,7 +129,9 @@ func (s * Server) Dial(server string) (* rpc.Client, error) {
 func (s * Server) tick(host Movable) {
   move, err := host.PerformMoveOn(s)
   if err != nil {
-    return
+    log.Infof( "Removing %s from hosts table", host.getName() )
+    delete(s.hosts,host.getName())
+    delete(s.rpcHosts, host.getName())
   }
 
   s.environment.Step(host.getName(), move)
