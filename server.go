@@ -21,6 +21,7 @@ var (
 
 type Server struct {
   hosts HostTable
+  rpcHosts map[string] * RpcHost
   grid Grid
   environment * Environment
   webserver * web.WebServer
@@ -31,12 +32,11 @@ type Grid struct {
 }
 
 func (g * Grid) Register(host * RpcHost, result * int) error {
-  for name, h := range g.server.hosts {
-
+  for name, h := range g.server.rpcHosts {
 
     // do a simple check if someone else is already using 
     // that port
-    if host.Address == h.getAddress() {
+    if host.Address == h.Address {
       return errors.New("ClientAddress is already in use.")
     }
 
@@ -45,13 +45,17 @@ func (g * Grid) Register(host * RpcHost, result * int) error {
     if name == host.Name {
       log.Infof( "Register Update :: %s", host.Name )
       host.resetErrors()
-      g.server.hosts[host.Name] = host
+      g.server.hosts[host.Name]     = host
+      g.server.rpcHosts[host.Name]  = host
       return nil
     }
   }
 
   log.Infof( "Register New :: %s", host.Name )
-  g.server.hosts[host.Name] = host
+
+  g.server.hosts[host.Name]     = host
+  g.server.rpcHosts[host.Name]  = host
+
   g.server.environment.AddPlayer(host.Name)
 
   return nil
@@ -114,6 +118,8 @@ func (s * Server) Start() {
   go s.webserver.Start()
 
   s.hosts = make( HostTable, 0 )
+  s.rpcHosts = make( map[string] * RpcHost, 0 )
+
   s.environment = NewEnvironment()
 
   grid := new(Grid)

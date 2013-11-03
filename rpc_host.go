@@ -7,15 +7,12 @@ import (
 
 type RpcHost struct {
   Host
+  Address string
   client * rpc.Client
 }
 
 func (host * RpcHost) getName() string {
   return host.Name
-}
-
-func (host * RpcHost) getAddress() string {
-  return host.Address
 }
 
 func (host * RpcHost) resetErrors() {

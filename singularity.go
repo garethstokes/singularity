@@ -56,7 +56,6 @@ func Begin(intelligence interface{}) {
     log.Error(err.Error())
   }
 
-
   server.Register(intelligence)
   server.BindAndListenOn(ClientAddress)
 }
