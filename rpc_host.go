@@ -27,6 +27,7 @@ func (host * RpcHost) PerformMoveOn(s * Server) (* Move, error) {
       if host.errCount == 3 {
         log.Infof( "Removing %s from hosts table", host.Name )
         delete(s.hosts,host.Name)
+        delete(s.rpcHosts, host.Name)
       } else {
         host.errCount++
       }
@@ -54,6 +55,7 @@ func (host * RpcHost) PerformMoveOn(s * Server) (* Move, error) {
 
     log.Infof( "Removing %s from hosts table", host.Name )
     delete(s.hosts,host.Name)
+    delete(s.rpcHosts, host.Name)
 
     player := s.environment.Entities[host.Name]
     s.webserver.Broadcast(toJson("remove", player))

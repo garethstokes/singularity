@@ -66,8 +66,8 @@ func (e * Environment) Step(playername string, move * Move) {
       // do nothing (regen stamina maybe?)
   }
 
-  log.Infof("direction: %@", player.Direction)
-  log.Infof("position: %@", player.Position)
+  //log.Infof("direction: %@", player.Direction)
+  //log.Infof("position: %@", player.Position)
   if player.Position.X < 0 || player.Position.X > e.BoardSize.X {
     player.Direction = player.Direction.NegateX()
 
@@ -77,10 +77,7 @@ func (e * Environment) Step(playername string, move * Move) {
       player.Position.X = e.BoardSize.X
     }
 
-    log.Infof("after x: %@", player.Direction)
-
     // ...and try again
-    log.Infof("trying again: %@", player.Position)
     e.Step(playername, move)
   }
 
@@ -93,10 +90,7 @@ func (e * Environment) Step(playername string, move * Move) {
       player.Position.Y = e.BoardSize.Y
     }
 
-    log.Infof("after y: %@", player.Direction)
-
     // ...and try again
-    log.Infof("trying again: %@", player.Position)
     e.Step(playername, move)
   }
 }

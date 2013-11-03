@@ -10,6 +10,7 @@ import (
   "net/http"
   "net/rpc"
   "errors"
+	"math/rand"
   "github.com/garethstokes/singularity/log"
   "github.com/garethstokes/singularity/web"
 )
@@ -64,7 +65,24 @@ func (g * Grid) Register(host * RpcHost, result * int) error {
 }
 
 func (s * Server) AddComputerHost() {
-  name := "Wesley snipes"
+  names := []string {
+    "Wesley snipes",
+    "Harry potter",
+    "Blackadder",
+    "Tetris",
+    "Atari",
+    "Sega",
+    "Vega",
+    "Flash gordon",
+    "Zero cool",
+    "Crash overide",
+  }
+
+	rand.Seed(int64(time.Now().Nanosecond()))
+  name := names[rand.Intn(len(names))]
+
+  log.Info("computer: " + name)
+
   player := new( MemoryHost )
   player.Name = name // use the working directory
 
@@ -139,7 +157,9 @@ func (s * Server) Start() {
   go s.BindAndListenOn(gameAddress)
 
   log.Info( "Addding computer players" )
-  s.AddComputerHost()
+  for i := 0; i < 3; i++ {
+    s.AddComputerHost()
+  }
 
   log.Info( "Entering game loop" )
 
