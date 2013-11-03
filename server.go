@@ -45,20 +45,31 @@ func (g * Grid) Register(host * RpcHost, result * int) error {
     if name == host.Name {
       log.Infof( "Register Update :: %s", host.Name )
       host.resetErrors()
-      g.server.hosts[host.Name]     = host
-      g.server.rpcHosts[host.Name]  = host
+
+      g.server.hosts[host.Name] = host
+      g.server.rpcHosts[host.Name] = host
+
       return nil
     }
   }
 
   log.Infof( "Register New :: %s", host.Name )
 
-  g.server.hosts[host.Name]     = host
-  g.server.rpcHosts[host.Name]  = host
+  g.server.hosts[host.Name] = host
+  g.server.rpcHosts[host.Name] = host
 
   g.server.environment.AddPlayer(host.Name)
 
   return nil
+}
+
+func (s * Server) AddComputerHost() {
+  name := "Wesley snipes"
+  player := new( MemoryHost )
+  player.Name = name // use the working directory
+
+  s.hosts[name] = player
+  s.environment.AddPlayer(player.Name)
 }
 
 func (s * Server) Register(object interface{}) error {
@@ -126,6 +137,9 @@ func (s * Server) Start() {
   grid.server = s
   s.Register(grid)
   go s.BindAndListenOn(gameAddress)
+
+  log.Info( "Addding computer players" )
+  s.AddComputerHost()
 
   log.Info( "Entering game loop" )
 

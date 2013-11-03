@@ -10,5 +10,9 @@ func (host * MemoryHost) getName() string {
 
 
 func (host * MemoryHost) PerformMoveOn(s * Server) (* Move, error) {
-  return nil, nil
+  result := new(Move)
+  result.Direction = &Vector{0,0}
+  result.Action = ACTION_MOVE_FORWARD
+
+  return result, nil
 }

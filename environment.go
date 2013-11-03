@@ -49,6 +49,7 @@ func (e * Environment) Step(playername string, move * Move) {
   player := e.Entities[playername]
   player.Action = move.Action
 
+
   switch move.Action {
     case ACTION_MOVE_FORWARD:
       // extropolate
