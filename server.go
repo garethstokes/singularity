@@ -143,7 +143,7 @@ func (s * Server) Start() {
 
   log.Info( "Entering game loop" )
 
-  c := time.Tick(100 * time.Millisecond)
+  c := time.Tick(500 * time.Millisecond)
   for _ = range c {
     for _, host := range s.hosts {
       go s.tick(host)
