@@ -9,6 +9,6 @@ func (host * MemoryHost) getName() string {
 }
 
 
-func (host * RpcHost) PerformMoveOn(s * Server) (* Move, error) {
+func (host * MemoryHost) PerformMoveOn(s * Server) (* Move, error) {
   return nil, nil
 }
