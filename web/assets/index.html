@@ -52,13 +52,13 @@
               board.remove(message[key]);
             }
           };
-
-          setInterval(function() {
-            if (isConnected === false) {
-              connect();
-            }
-          }, 1000);
         };
+
+        setInterval(function() {
+          if (isConnected === false) {
+            connect();
+          }
+        }, 1000);
 
         if (typeof window.WebSocket == 'function') {
           connect();
