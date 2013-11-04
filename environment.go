@@ -50,49 +50,56 @@ func (e * Environment) Step(playername string, move * Move) {
   player := e.Entities[playername]
   player.Action = move.Action
 
+  e.stepEntity(player, move)
+}
 
+func (e * Environment) stepEntity(entity * Entity, move * Move) {
   switch move.Action {
     case ACTION_MOVE_FORWARD:
       // extropolate
-      n := player.Direction.Normalise().Scale(2)
+      n := entity.Direction.Normalise().Scale(2)
       log.Infof("n: %@", n)
-      player.Position = player.Position.Add(n)
+      entity.Position = entity.Position.Add(n)
     case ACTION_MOVE_BACKWARD:
-      n := player.Direction.Normalise().Scale(10)
-      player.Position = player.Position.Subtract(n)
+      n := entity.Direction.Normalise().Scale(10)
+      entity.Position = entity.Position.Subtract(n)
     case ACTION_MOVE_TURN:
       d := move.Direction.Normalise()
-      player.Direction = d
+      entity.Direction = d
     case ACTION_MOVE_STOP:
       // do nothing (regen stamina maybe?)
   }
 
+  e.bounceEntityOfWallsIfNeeded(entity, move);
+}
+
+func (e * Environment) bounceEntityOfWallsIfNeeded(entity * Entity, move * Move) {
   //log.Infof("direction: %@", player.Direction)
   //log.Infof("position: %@", player.Position)
-  if player.Position.X < 0 || player.Position.X > e.BoardSize.X {
-    player.Direction = player.Direction.NegateX()
+  if entity.Position.X < 0 || entity.Position.X > e.BoardSize.X {
+    entity.Direction = entity.Direction.NegateX()
 
-    if player.Position.X < 0 {
-      player.Position.X = 0
+    if entity.Position.X < 0 {
+      entity.Position.X = 0
     } else {
-      player.Position.X = e.BoardSize.X
+      entity.Position.X = e.BoardSize.X
     }
 
     // ...and try again
-    e.Step(playername, move)
+    e.stepEntity(entity, move)
   }
 
-  if player.Position.Y < 0 || player.Position.Y > e.BoardSize.Y {
-    player.Direction = player.Direction.NegateY()
+  if entity.Position.Y < 0 || entity.Position.Y > e.BoardSize.Y {
+    entity.Direction = entity.Direction.NegateY()
 
-    if player.Position.Y < 0 {
-      player.Position.Y = 0
+    if entity.Position.Y < 0 {
+      entity.Position.Y = 0
     } else {
-      player.Position.Y = e.BoardSize.Y
+      entity.Position.Y = e.BoardSize.Y
     }
 
     // ...and try again
-    e.Step(playername, move)
+    e.stepEntity(entity, move)
   }
 }
 
