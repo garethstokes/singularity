@@ -50,7 +50,7 @@ func (host * RpcHost) PerformMoveOn(s * Server) (* Move, error) {
   if err != nil {
 
     player := s.environment.Entities[host.Name]
-    s.webserver.Broadcast(toJson("remove", player))
+    s.webserver.Broadcast(toJson("remove", player.Name))
 
     return nil, err
   }

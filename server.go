@@ -9,7 +9,6 @@ import (
   "time"
   "net/http"
   "net/rpc"
-  "errors"
 	"math/rand"
   "github.com/garethstokes/singularity/log"
   "github.com/garethstokes/singularity/web"
@@ -21,8 +20,7 @@ var (
 )
 
 type Server struct {
-  hosts HostTable
-  rpcHosts map[string] * RpcHost
+  hostTable * HostTable
   grid Grid
   environment * Environment
   webserver * web.WebServer
@@ -33,33 +31,13 @@ type Grid struct {
 }
 
 func (g * Grid) Register(host * RpcHost, result * int) error {
-  for name, h := range g.server.rpcHosts {
 
-    // do a simple check if someone else is already using 
-    // that port
-    if host.Address == h.Address {
-      return errors.New("ClientAddress is already in use.")
-    }
-
-    // maybe the user is already registered and just wants
-    // to update their information?
-    if name == host.Name {
-      log.Infof( "Register Update :: %s", host.Name )
-      host.resetErrors()
-
-      g.server.hosts[host.Name] = host
-      g.server.rpcHosts[host.Name] = host
-
-      return nil
-    }
+  err := g.server.hostTable.AddRpcHost(host)
+  if err != nil {
+    return err
   }
 
-  log.Infof( "Register New :: %s", host.Name )
-
-  g.server.hosts[host.Name] = host
-  g.server.rpcHosts[host.Name] = host
-
-  g.server.environment.AddPlayer(host.Name, "human")
+  g.server.environment.AddPlayer(host.Name, "human", 1)
 
   return nil
 }
@@ -86,8 +64,8 @@ func (s * Server) AddComputerHost() {
   player := new( MemoryHost )
   player.Name = name // use the working directory
 
-  s.hosts[name] = player
-  s.environment.AddPlayer(player.Name, "ai")
+  s.hostTable.AddMovableHostOnly(player)
+  s.environment.AddPlayer(player.Name, "ai", 2)
 }
 
 func (s * Server) Register(object interface{}) error {
@@ -127,17 +105,24 @@ func (s * Server) Dial(server string) (* rpc.Client, error) {
 }
 
 func (s * Server) tick(host Movable) {
+  name := host.getName()
+
   move, err := host.PerformMoveOn(s)
   if err != nil {
-    log.Infof( "Removing %s from hosts table", host.getName() )
-    delete(s.hosts,host.getName())
-    delete(s.rpcHosts, host.getName())
+    s.hostTable.RemoveHostByName(name)
+    s.webserver.Broadcast(toJson("remove", name))
+    return
   }
 
-  s.environment.Step(host.getName(), move)
+  s.environment.Step(name, move)
 
-  player := s.environment.Entities[host.getName()]
-  s.webserver.Broadcast(toJson("update", player))
+  player := s.environment.Entities[name]
+  if player == nil {
+    s.hostTable.RemoveHostByName(name)
+    s.webserver.Broadcast(toJson("remove", name))
+  } else {
+    s.webserver.Broadcast(toJson("update", player))
+  }
 }
 
 func (s * Server) Start() {
@@ -148,8 +133,7 @@ func (s * Server) Start() {
   s.webserver = web.NewWebServer()
   go s.webserver.Start()
 
-  s.hosts = make( HostTable, 0 )
-  s.rpcHosts = make( map[string] * RpcHost, 0 )
+  s.hostTable = NewHostTable()
 
   s.environment = NewEnvironment()
 
@@ -159,15 +143,15 @@ func (s * Server) Start() {
   go s.BindAndListenOn(gameAddress)
 
   log.Info( "Addding computer players" )
-  for i := 0; i < 3; i++ {
+  for i := 0; i < 1; i++ {
     s.AddComputerHost()
   }
 
   log.Info( "Entering game loop" )
 
-  c := time.Tick(500 * time.Millisecond)
+  c := time.Tick(1000 * time.Millisecond)
   for _ = range c {
-    for _, host := range s.hosts {
+    for _, host := range s.hostTable.all {
       go s.tick(host)
     }
   }

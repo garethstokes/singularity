@@ -38,6 +38,17 @@ func (v * Vector) Magnitude() float64 {
   return math.Sqrt(v.Length())
 }
 
+/* 
+ * Distance between two points using the classic 
+ * pythagoras therom
+ *
+ */
+func (v1 * Vector) DistanceBetween(v2 * Vector) float64 {
+  a := v1.X + v2.X
+  b := v1.Y + v2.Y
+  return (a * a) + (b * b)
+}
+
 /*
  * converts the vector to a unit vector
  */

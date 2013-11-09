@@ -11,7 +11,7 @@ func TestNormaliseVector(t * testing.T) {
   v.X = 100
   v.Y = 100
 
-  v.Normalise()
+  v = v.Normalise()
 
   var unit = float64(1)
   m := v.Magnitude()

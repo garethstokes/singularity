@@ -129,6 +129,7 @@ singularity.board = function() {
     },
 
     update: function(player) {
+      console.log(player.position)
       // transform to cartisian coordinates
       player.position.y = config.height - player.position.y;
 
@@ -165,8 +166,8 @@ singularity.board = function() {
       players = {};
     },
 
-    remove: function(player) {
-      delete players[player.name];
+    remove: function(name) {
+      delete players[name];
     }
   };
 

@@ -34,10 +34,13 @@ func (e * Environment) RandomNormalisedVector() (* Vector) {
   return v.Normalise()
 }
 
-func (e * Environment) AddPlayer(name string, classifier string) {
+func (e * Environment) AddPlayer(name string, classifier string, layer int) {
   player := new(Entity)
   player.Name = name
   player.Classifier = classifier
+  player.Size = &Size{ 25, 25 }
+  player.Health = 100
+  player.Layer = layer
 
   // position the player on the field randomly
   player.Position = e.RandomScalar()
@@ -48,9 +51,14 @@ func (e * Environment) AddPlayer(name string, classifier string) {
 
 func (e * Environment) Step(playername string, move * Move) {
   player := e.Entities[playername]
+  if player == nil {
+    log.Infof("Step :: %s not found", playername)
+    return
+  }
   player.Action = move.Action
 
   e.stepEntity(player, move)
+  e.removeDeadEntities()
 }
 
 func (e * Environment) stepEntity(entity * Entity, move * Move) {
@@ -71,6 +79,37 @@ func (e * Environment) stepEntity(entity * Entity, move * Move) {
   }
 
   e.bounceEntityOfWallsIfNeeded(entity, move);
+
+  e.collideEntityWithHitLayers(entity)
+}
+
+func (e * Environment) removeDeadEntities() {
+  for _, entity := range e.Entities {
+    if entity.Health <= 0 {
+      e.removeEntity(entity)
+    }
+  }
+}
+
+func (e * Environment) removeEntity(entity * Entity) {
+  log.Infof("removing dead entity :: %s", entity.Name)
+  delete(e.Entities, entity.Name)
+}
+
+func (e * Environment) collideEntityWithHitLayers(entity * Entity) {
+  if entity.Classifier == "human" {
+    return
+  }
+
+  for _ , _entity := range e.Entities {
+    if _entity.Layer == entity.Layer {
+      continue
+    }
+
+    if _entity.Rect.OverlapsWith(entity.Rect) {
+      entity.Health = 0
+    }
+  }
 }
 
 func (e * Environment) bounceEntityOfWallsIfNeeded(entity * Entity, move * Move) {
